@@ -13,6 +13,6 @@ class JohanController extends AbstractController
     {
         return new JsonResponse([
             "message"=> "Hola soy johan"
-        ]);;
+        ]);
     }
 }
