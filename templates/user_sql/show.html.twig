@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UserSQL{% endblock %}
+
+{% block body %}
+    <h1>UserSQL</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ user_s_q_l.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ user_s_q_l.name }}</td>
+            </tr>
+            <tr>
+                <th>Surname</th>
+                <td>{{ user_s_q_l.surname }}</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td>{{ user_s_q_l.phone }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_user_s_q_l_index') }}">back to list</a>
+
+    <a href="{{ path('app_user_s_q_l_edit', {'id': user_s_q_l.id}) }}">edit</a>
+
+    {{ include('user_sql/_delete_form.html.twig') }}
+{% endblock %}

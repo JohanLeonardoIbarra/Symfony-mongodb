@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}UserSQL index{% endblock %}
+
+{% block body %}
+    <h1>UserSQL index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Phone</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user_s_q_l in user_s_q_ls %}
+            <tr>
+                <td>{{ user_s_q_l.id }}</td>
+                <td>{{ user_s_q_l.name }}</td>
+                <td>{{ user_s_q_l.surname }}</td>
+                <td>{{ user_s_q_l.phone }}</td>
+                <td>
+                    <a href="{{ path('app_user_s_q_l_show', {'id': user_s_q_l.id}) }}">show</a>
+                    <a href="{{ path('app_user_s_q_l_edit', {'id': user_s_q_l.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_user_s_q_l_new') }}">Create new</a>
+{% endblock %}

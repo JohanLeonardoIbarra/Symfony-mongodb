@@ -18,15 +18,34 @@ class User{
     private $name;
     /** @MongoDB\Field(type="string") */
     private $surname;
+    /** @MongoDB\Field(type="int") */
+    private $phone_number;
+
+    /**
+     * @return mixed
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phone_number;
+    }
+
+    /**
+     * @param mixed $phone_number
+     */
+    public function setPhoneNumber($phone_number): void
+    {
+        $this->phone_number = $phone_number;
+    }
 
     /**
      * @param $name
      * @param $surname
      */
-    public function __construct($name, $surname)
+    public function __construct($name, $surname, $phone_number)
     {
         $this->name = $name;
         $this->surname = $surname;
+        $this->phone_number = $phone_number;
     }
 
     /**
