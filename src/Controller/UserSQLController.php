@@ -10,13 +10,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Json;
 
 #[Route('/user/sql')]
 class UserSQLController extends AbstractController
 {
     #[Route('/', name: 'app_user_s_q_l_index', methods: ['GET'])]
-    public function index(UserSQLRepository $userSQLRepository): Response
+    public function index(UserSQLRepository $userSQLRepository): JsonResponse
     {
         $data = $userSQLRepository->findAll();
         return $this->json($data);
@@ -44,38 +43,47 @@ class UserSQLController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_user_s_q_l_show', methods: ['GET'])]
-    public function show(UserSQL $userSQL): Response
+    public function show(Request $request, UserSQLRepository $repository): JsonResponse
     {
-        return $this->render('user_sql/show.html.twig', [
-            'user_s_q_l' => $userSQL,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_user_s_q_l_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, UserSQL $userSQL, UserSQLRepository $userSQLRepository): Response
-    {
-        $form = $this->createForm(UserSQLType::class, $userSQL);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userSQLRepository->add($userSQL, true);
-
-            return $this->redirectToRoute('app_user_s_q_l_index', [], Response::HTTP_SEE_OTHER);
+        try{
+            $id = $request->attributes->all()["id"];
+            $user = $repository->findOneBy(["id"=>$id]);
+            return $this->json($user);
+        }catch(\Exception $error){
+            return $this->json([
+                "message"=>$error->getMessage()
+            ]);
         }
-
-        return $this->renderForm('user_sql/edit.html.twig', [
-            'user_s_q_l' => $userSQL,
-            'form' => $form,
-        ]);
     }
 
-    #[Route('/{id}', name: 'app_user_s_q_l_delete', methods: ['POST'])]
+    #[Route('/{id}/edit', name: 'app_user_s_q_l_edit', methods: ['GET', 'PUT'])]
+    public function edit(Request $request, UserSQLRepository $userSQLRepository): Response
+    {
+        //Capturo el id junto con el body
+        $id = $request->attributes->all()["id"];
+        $requestData = $request->toArray();
+        //Busco el usuario en la base de datos
+        $userSQL = $userSQLRepository->findOneBy(["id"=>$id]);
+        $userSQL->setName($requestData["name"])
+             ->setSurname($requestData["surname"])
+             ->setPhone($requestData["phone"]);
+        //Actualizo el valor en la base de datos
+        $userSQLRepository->add($userSQL, true);
+        //return json
+        return $this->json($userSQL);
+    }
+
+    #[Route('/{id}', name: 'app_user_s_q_l_delete', methods: ['DELETE'])]
     public function delete(Request $request, UserSQL $userSQL, UserSQLRepository $userSQLRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$userSQL->getId(), $request->request->get('_token'))) {
-            $userSQLRepository->remove($userSQL, true);
-        }
+        //Capturo el id
+        $id = $request->attributes->all()["id"];
 
-        return $this->redirectToRoute('app_user_s_q_l_index', [], Response::HTTP_SEE_OTHER);
+        $user = $userSQLRepository->findOneBy(["id"=>$id]);
+        $userSQLRepository->remove($user, true);
+
+        return $this->json([
+            "success"=>"User $id Deleted"
+        ]);
     }
 }

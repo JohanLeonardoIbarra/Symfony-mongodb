@@ -33,7 +33,7 @@ class UserController extends AbstractController
     {
         try{
             $data = $request->toArray();
-            $user = new User($data["name"], $data["surname"]);
+            $user = new User($data["name"], $data["surname"], $data["phone"]);
             $documentManager->persist($user);
             $documentManager->flush();
             return new JsonResponse([
