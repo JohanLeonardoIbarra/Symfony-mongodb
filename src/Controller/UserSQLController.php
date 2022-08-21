@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\Json;
 
-#[Route('/user_sql')]
+#[Route('/user/sql')]
 class UserSQLController extends AbstractController
 {
     #[Route('/', name: 'app_user_s_q_l_index', methods: ['GET'])]

@@ -25,9 +25,9 @@ class UserSQL
     /**
      * @param string|null $name
      * @param string|null $surname
-     * @param int|null $phone
+     * @param string|null $phone
      */
-    public function __construct(?string $name, ?string $surname, ?string $phone)
+    public function __construct(?string $name = "", ?string $surname = "", ?string $phone = "")
     {
         $this->name = $name;
         $this->surname = $surname;
@@ -64,7 +64,7 @@ class UserSQL
         return $this;
     }
 
-    public function getPhone(): ?int
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
