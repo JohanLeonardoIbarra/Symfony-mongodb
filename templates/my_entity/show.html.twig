@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MyEntity{% endblock %}
+
+{% block body %}
+    <h1>MyEntity</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ my_entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ my_entity.name }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_my_entity_index') }}">back to list</a>
+
+    <a href="{{ path('app_my_entity_edit', {'id': my_entity.id}) }}">edit</a>
+
+    {{ include('my_entity/_delete_form.html.twig') }}
+{% endblock %}
