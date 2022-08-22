@@ -10,6 +10,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 #[Route('/user/sql')]
 class UserSQLController extends AbstractController
@@ -21,24 +25,22 @@ class UserSQLController extends AbstractController
         return $this->json($data);
     }
 
-    #[Route('/new', name: 'app_user_s_q_l_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, UserSQLRepository $userSQLRepository): Response
+    #[Route('/new', name: 'app_user_s_q_l_new', methods: ['POST'])]
+    public function new(Request $request, UserSQLRepository $userSQLRepository): JsonResponse
     {
         try{
             $requestData = $request->toArray();
             if (in_array(null, $requestData)) {
                 return new JsonResponse(["message" => "invalid fields"]);
             }
-            $userSQL = new UserSQL();
-            $userSQL->setName($requestData["name"])
-                ->setSurname($requestData["surname"])
-                ->setPhone($requestData["phone"]);
+            $userSQL = new UserSQL($requestData["name"], $requestData["surname"], $requestData["phone"]);
+
             $userSQLRepository->add($userSQL, true);
-            return new JsonResponse([
-                "user"=>$userSQL->toString()
-            ]);
+            return $this->json(
+                $userSQL
+            )->setStatusCode(202);
         }catch (\Exception $error){
-            return new JsonResponse(["message"=>$error->getMessage()]);
+            return $this->json(["message"=>$error->getMessage()]);
         }
     }
 
@@ -56,27 +58,25 @@ class UserSQLController extends AbstractController
         }
     }
 
-    #[Route('/{id}/edit', name: 'app_user_s_q_l_edit', methods: ['GET', 'PUT'])]
-    public function edit(Request $request, UserSQLRepository $userSQLRepository): Response
+    #[Route('/{id}/edit', name: 'app_user_s_q_l_edit', methods: ['PUT'])]
+    public function edit(Request $request, UserSQLRepository $userSQLRepository): JsonResponse
     {
-        //Capturo el id junto con el body
         $id = $request->attributes->all()["id"];
         $requestData = $request->toArray();
-        //Busco el usuario en la base de datos
+
         $userSQL = $userSQLRepository->findOneBy(["id"=>$id]);
         $userSQL->setName($requestData["name"])
              ->setSurname($requestData["surname"])
              ->setPhone($requestData["phone"]);
-        //Actualizo el valor en la base de datos
+
         $userSQLRepository->add($userSQL, true);
-        //return json
+
         return $this->json($userSQL);
     }
 
     #[Route('/{id}', name: 'app_user_s_q_l_delete', methods: ['DELETE'])]
-    public function delete(Request $request, UserSQL $userSQL, UserSQLRepository $userSQLRepository): Response
+    public function delete(Request $request, UserSQLRepository $userSQLRepository): JsonResponse
     {
-        //Capturo el id
         $id = $request->attributes->all()["id"];
 
         $user = $userSQLRepository->findOneBy(["id"=>$id]);
