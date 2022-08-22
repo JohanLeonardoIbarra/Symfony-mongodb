@@ -25,7 +25,7 @@ class LybraryController extends AbstractController
 					'title' => 'libro 1'],
 				[
 					'id' => 2,
-					'title' => '$title'
+					'title' => $title
 				]
 			]
 		]);
