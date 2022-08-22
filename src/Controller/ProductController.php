@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
-    #[Route('/product', name: 'app_product')]
+    #[Route('/product', name: 'app_product', methods: ['GET'])]
     public function index(): JsonResponse
     {
         return $this->json([
